@@ -3,6 +3,7 @@ import { UserCircle } from 'phosphor-react'
 
 import logoImage from '@/assets/logo.png'
 import Image from 'next/image'
+import { CategoriesHeader } from '../shared/CategoriesHeader'
 
 export function Header() {
   return (
@@ -17,9 +18,7 @@ export function Header() {
         </Link>
 
         <ul className="flex flex-1 gap-10 items-center justify-center">
-          <li className="font-medium">
-            <Link href="#">Categorias</Link>
-          </li>
+          <CategoriesHeader />
 
           <li className="font-medium">
             <Link href="#">Lojas</Link>

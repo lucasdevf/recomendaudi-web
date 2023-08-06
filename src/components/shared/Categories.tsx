@@ -1,8 +1,12 @@
+import { CategoryDTO } from '@/dto/CategoryDTO'
+import { api } from '@/http/api'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useQuery } from 'react-query'
+import { CategoriesLoading } from '../loadings/CategoriesLoading'
 
 export function Categories() {
-  const categories = [
+  const c = [
     {
       label: 'Bares',
       imageUrl:
@@ -30,29 +34,51 @@ export function Categories() {
     },
   ]
 
+  async function fetchCategories() {
+    const response = await api.get('/categories', {
+      params: {
+        page: 1,
+        limit: 5,
+      },
+    })
+
+    return response.data
+  }
+
+  const {
+    data: categories,
+    error,
+    isLoading,
+  } = useQuery<CategoryDTO[]>('categories', fetchCategories)
+
   return (
     <div className="max-w-7xl mx-auto mt-10">
       <h1 className="text-sm font-semibold">CATEGORIAS</h1>
 
-      <Link href="#" className="grid grid-cols-5 gap-10 mt-5">
-        {categories.map((category) => (
-          <div
-            key={category.label}
-            className="p-4 rounded shadow h-64 relative overflow-hidden"
-          >
-            <Image
-              src={category.imageUrl}
-              alt=""
-              fill
-              className="w-full h-full object-cover brightness-[65%] hover:scale-105 transition-all"
-            />
+      {isLoading && <CategoriesLoading />}
 
-            <p className="text-white text-lg absolute bottom-5 font-semibold">
-              {category.label}
-            </p>
-          </div>
-        ))}
-      </Link>
+      {categories && (
+        <div className="grid grid-cols-5 gap-10 mt-5">
+          {categories.map((category) => (
+            <Link
+              href="#"
+              key={category.id}
+              className="p-4 rounded shadow h-64 relative overflow-hidden"
+            >
+              <Image
+                src={category.image}
+                alt=""
+                fill
+                className="w-full h-full object-cover brightness-[65%] hover:scale-105 transition-all"
+              />
+
+              <p className="text-white text-lg absolute bottom-5 font-semibold">
+                {category.name}
+              </p>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
